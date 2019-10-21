@@ -18,7 +18,7 @@ namespace WebApplication1
         protected void CmdGenerar_Click(object sender, EventArgs e)
         {
             JobLogger log = new JobLogger(true,false,false,true,true,false);
-            log.LogMessage("pepe", true, false, true);
+            log.LogMessage("Test", true, false, true);
            
         }
     }
