@@ -1,0 +1,7 @@
+﻿Algunos Ajustes:
+
+- Inicialmnete habia un error al invocar el metodo LogMessage ya que dos parametros no pueden tener el mismo nombre con diferente tipo dato primitivo
+- Se cambió que le metodo contsructor recibiera valores por paramtros y se crearon propiedades para ests fin
+--_initialized No es usada asi que se quito
+--Se cambio el nombre del archivo para dejar un formato de fecha menos confuso que genere erro al leer o escribir en el archivo
+--Se agregó validación para crear el archivo cuando no exista

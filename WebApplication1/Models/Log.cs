@@ -5,71 +5,59 @@ namespace WebApplication1.Models
 {
     public class JobLogger
     {
-
         /// <summary>
-        /// 
+        ///  Obtiene y Establece el valor de Message
         /// </summary>
-        private static bool _logToFile;
+        public string Message { get; set; }
         /// <summary>
-        /// 
+        /// Obtiene y Establece el valor de LogToFile
         /// </summary>
-        private static bool _logToConsole;
+        public bool LogToFile { get; set; }
         /// <summary>
-        /// 
+        /// Obtiene y Establece el valor de LogToConsole
         /// </summary>
-        private static bool _logMessage;
+        public bool LogToConsole { get; set; }
         /// <summary>
-        /// 
+        /// Obtiene y Establece el valor de LogMessage
         /// </summary>
-        private static bool _logWarning;
+        public bool LogMessage { get; set; }
         /// <summary>
-        /// 
+        /// Obtiene y Establece el valor de LogWarning
         /// </summary>
-        private static bool _logError;
+        public bool LogWarning { get; set; }
         /// <summary>
-        /// 
+        /// Obtiene y Establece el valor de LogError
         /// </summary>
-        private static bool LogToDatabase;
+        public bool LogError { get; set; }
+        /// <summary>
+        /// Obtiene y Establece el valor de LogToDatabase
+        /// </summary>
+        public bool LogToDatabase { get; set; }
         //private bool _initialized;
 
         /// <summary>
         /// Constructor JobLogger 
         /// </summary>
-        /// <param name="logToFile">Aplica si el log se guarda en Archivo</param>
-        /// <param name="logToConsole">Aplica si se visualiza el mensaje en consola</param>
-        /// <param name="logToDatabase">Aplica si se inserta el log en la BD</param>
-        /// <param name="logMessage">Aplica Mensaje</param>
-        /// <param name="logWarning">Aplica si el mensaje es advertencia</param>
-        /// <param name="logError">Aplica si el log es Error</param>
-        public JobLogger(bool logToFile, bool logToConsole, bool logToDatabase, bool logMessage, bool logWarning, bool logError)
+        public JobLogger()
         {
-            _logError = logError;
-            _logMessage = logMessage;
-            _logWarning = logWarning;
-            LogToDatabase = logToDatabase;
-            _logToFile = logToFile;
-            _logToConsole = logToConsole;
+            
         }
 
         /// <summary>
         /// Metodo que registra log en la base de datos y archivo plano
-        /// </summary>
-        /// <param name="strmessage">Mensaje a insertar</param>
-        /// <param name="message">bolean para saber si aplica mensaje</param>
-        /// <param name="warning">bolean para saber si aplica advertencia</param>
-        /// <param name="error">bolean para saber si aplica Error/param>
-        public void LogMessage(string strmessage, bool message, bool warning, bool error)
+        /// </summary>       
+        public void AddLogMessage()
         {
-            strmessage.Trim();
-            if (strmessage == null || strmessage.Length == 0)
+            Message.Trim();
+            if (Message == null || Message.Length == 0)
             {
                 return;
             }
-            if (!_logToConsole && !_logToFile && !LogToDatabase)
+            if (!LogToConsole && !LogToFile && !LogToDatabase)
             {
                 throw new Exception("Invalid configuration");
             }
-            if ((!_logError && !_logMessage && !_logWarning) || (!message && !warning && !error))
+            if (!LogError && !LogMessage && !LogWarning)
             {
                 throw new Exception("Error or Warning or Message must be specified");
             }
@@ -79,19 +67,19 @@ namespace WebApplication1.Models
                 SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString);
                 connection.Open();
                 int t = 0;
-                if (message && _logMessage)
+                if (LogMessage)
                 {
                     t = 1;
                 }
-                if (error && _logError)
+                if (LogError)
                 {
                     t = 2;
                 }
-                if (warning && _logWarning)
+                if (LogWarning)
                 {
                     t = 3;
                 }
-                SqlCommand command = new SqlCommand("Insert into Log Values('" + strmessage + "', " + t.ToString() + ")", connection);
+                SqlCommand command = new SqlCommand("Insert into Log Values('" + Message + "', " + t.ToString() + ")", connection);
 
                 command.ExecuteNonQuery();
 
@@ -105,36 +93,36 @@ namespace WebApplication1.Models
                     System.IO.File.Create(System.Configuration.ConfigurationManager.AppSettings["LogFileDirectory"] + "LogFile" + DateTime.Now.ToString("yyyyMMdd") + ".txt");
                 }
 
-                if (error && _logError)
+                if (LogError)
                 {
-                    l = l + DateTime.Now.ToShortDateString() + message;
+                    l = l + DateTime.Now.ToShortDateString() + Message;
                 }
-                if (warning && _logWarning)
+                if (LogWarning)
                 {
-                    l = l + DateTime.Now.ToShortDateString() + message;
+                    l = l + DateTime.Now.ToShortDateString() + Message;
                 }
-                if (message && _logMessage)
+                if (LogMessage)
                 {
-                    l = l + DateTime.Now.ToShortDateString() + message;
+                    l = l + DateTime.Now.ToShortDateString() + Message;
                 }
 
                 System.IO.File.WriteAllText(System.Configuration.ConfigurationManager.AppSettings["LogFileDirectory"] + "LogFile" + DateTime.Now.ToString("yyyyMMdd") + ".txt", l);
 
-                if (error && _logError)
+                if (LogError)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                 }
 
-                if (warning && _logWarning)
+                if (LogWarning)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                 }
-                if (message && _logMessage)
+                if (LogMessage)
                 {
                     Console.ForegroundColor = ConsoleColor.White;
                 }
 
-                Console.WriteLine(DateTime.Now.ToShortDateString() + message);
+                Console.WriteLine(DateTime.Now.ToShortDateString() + Message);
             }
             catch (Exception ex)
             {
